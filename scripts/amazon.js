@@ -1,10 +1,10 @@
-import { cart } from "../data/cart.js"
-import { products } from "../data/products.js"
+import { cart, addToCart } from "../data/cart.js";
+import { products } from "../data/products.js";
+import { formatCurrency } from "./utils/money.js";
+let producthtml = ``;
 
-let producthtml = ``
 products.forEach((product) => {
-
-    producthtml += ` <div class="product-container">
+  producthtml += ` <div class="product-container">
           <div class="product-image-container">
             <img class="product-image"
               src="${product.image}">
@@ -16,14 +16,14 @@ products.forEach((product) => {
 
           <div class="product-rating-container">
             <img class="product-rating-stars"
-              src="images/ratings/rating-${product.rating.stars*10}.png">
+              src="images/ratings/rating-${product.rating.stars * 10}.png">
             <div class="product-rating-count link-primary">
               ${product.rating.count}
             </div>
           </div>
 
           <div class="product-price">
-            $${(product.priceCents / 100).toFixed(2)}
+            $${formatCurrency(product.priceCents)}
           </div>
 
           <div class="product-quantity-container">
@@ -48,34 +48,34 @@ products.forEach((product) => {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary js-add-to-cart-button" data-product-id="${product.id}">
+          <button class="add-to-cart-button button-primary js-add-to-cart-button" data-product-id="${
+            product.id
+          }">
             Add to Cart
           </button>
         </div>
-`
+`;
+});
 
-})
+document.querySelector(".js-products-grid").innerHTML = producthtml; 
 
-document.querySelector(".js-products-grid").innerHTML = producthtml
+function totalQuantity() {
+  let cartquantity = 0;
+  cart.forEach((element) => {
+    cartquantity += element.quantity;
+  });
+  document.querySelector(".js-cart-quantity").innerHTML = cartquantity;
+}
 
 document.querySelectorAll(".js-add-to-cart-button").forEach((btn) => {
-    btn.addEventListener("click", () =>{
-      const productId = btn.dataset.productId
-      const matchingitem = cart.find( (item) => productId === item.productId); // this stores the reference to the original object
-      const quantityselector = document.querySelector(`.js-quantity-select[data-product-id="${productId}"]`)
-      const quantity = parseInt(quantityselector.value)
+  btn.addEventListener("click", () => {
+    const productId = btn.dataset.productId;
+    const quantityselector = document.querySelector(
+      `.js-quantity-select[data-product-id="${productId}"]`
+    );
+    const quantity = parseInt(quantityselector.value);
 
-      if (matchingitem){
-        matchingitem.quantity +=  quantity // this works because objects are passed by reference and not value
-      }
-      else{
-        cart.push({productId: productId, quantity: quantity})
-      }
-      let cartquantity = 0;
-      cart.forEach(element => {
-        cartquantity += element.quantity;
-      });
-
-      document.querySelector(".js-cart-quantity").innerHTML = cartquantity
-    })
-})
+    addToCart(productId);
+    totalQuantity();
+  });
+});
