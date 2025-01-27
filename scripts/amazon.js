@@ -1,3 +1,6 @@
+import { cart } from "../data/cart.js"
+import { products } from "../data/products.js"
+
 let producthtml = ``
 products.forEach((product) => {
 
@@ -24,7 +27,7 @@ products.forEach((product) => {
           </div>
 
           <div class="product-quantity-container">
-            <select>
+            <select class= "js-quantity-select" data-product-id="${product.id}">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -57,15 +60,16 @@ document.querySelector(".js-products-grid").innerHTML = producthtml
 
 document.querySelectorAll(".js-add-to-cart-button").forEach((btn) => {
     btn.addEventListener("click", () =>{
-      const productId = btn.dataset.id
-
+      const productId = btn.dataset.productId
       const matchingitem = cart.find( (item) => productId === item.productId); // this stores the reference to the original object
+      const quantityselector = document.querySelector(`.js-quantity-select[data-product-id="${productId}"]`)
+      const quantity = parseInt(quantityselector.value)
 
       if (matchingitem){
-        matchingitem.quantity += 1 // this works because objects are passed by reference and not value
+        matchingitem.quantity +=  quantity // this works because objects are passed by reference and not value
       }
       else{
-        cart.push({productId: productId, quantity: 1})
+        cart.push({productId: productId, quantity: quantity})
       }
       let cartquantity = 0;
       cart.forEach(element => {
