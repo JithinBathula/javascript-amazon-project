@@ -1,53 +1,3 @@
-const products = [
-    {
-      id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
-      image: "images/products/athletic-cotton-socks-6-pairs.jpg",
-      name: "Black and Gray Athletic Cotton Socks - 6 Pairs",
-      rating: {
-        stars: 4.5,
-        count: 87
-      },
-      priceCents: 1090,
-      keywords: [
-        "socks",
-        "sports",
-        "apparel"
-      ]
-    },
-    {
-      id: "15b6fc6f-327a-4ec4-896f-486349e85a3d",
-      image: "images/products/intermediate-composite-basketball.jpg",
-      name: "Intermediate Size Basketball",
-      rating: {
-        stars: 4,
-        count: 127
-      },
-      priceCents: 2095,
-      keywords: [
-        "sports",
-        "basketballs"
-      ]
-    },
-    {
-      id: "83d4ca15-0f35-48f5-b7a3-1ea210004f2e",
-      image: "images/products/adults-plain-cotton-tshirt-2-pack-teal.jpg",
-      name: "Adults Plain Cotton T-Shirt - 2 Pack",
-      rating: {
-        stars: 4.5,
-        count: 56
-      },
-      priceCents: 799,
-      keywords: [
-        "tshirts",
-        "apparel",
-        "mens"
-      ],
-      type: "clothing",
-      sizeChartLink: "images/clothing-size-chart.png"
-    }
-
-]
-
 let producthtml = ``
 products.forEach((product) => {
 
@@ -95,7 +45,7 @@ products.forEach((product) => {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary">
+          <button class="add-to-cart-button button-primary js-add-to-cart-button" data-product-id="${product.id}">
             Add to Cart
           </button>
         </div>
@@ -104,3 +54,24 @@ products.forEach((product) => {
 })
 
 document.querySelector(".js-products-grid").innerHTML = producthtml
+
+document.querySelectorAll(".js-add-to-cart-button").forEach((btn) => {
+    btn.addEventListener("click", () =>{
+      const productId = btn.dataset.id
+
+      const matchingitem = cart.find( (item) => productId === item.productId); // this stores the reference to the original object
+
+      if (matchingitem){
+        matchingitem.quantity += 1 // this works because objects are passed by reference and not value
+      }
+      else{
+        cart.push({productId: productId, quantity: 1})
+      }
+      let cartquantity = 0;
+      cart.forEach(element => {
+        cartquantity += element.quantity;
+      });
+
+      document.querySelector(".js-cart-quantity").innerHTML = cartquantity
+    })
+})
