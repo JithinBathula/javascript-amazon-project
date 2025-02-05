@@ -1,3 +1,7 @@
+export function getDeliverOptionUsingId(id){
+    return deliveryOptions.find(item => item.id == id)
+}
+
 export const deliveryOptions = [{
     "id": 1,
     "deliverydays": 10,

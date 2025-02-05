@@ -1,16 +1,17 @@
 import { cart, removefromcart, updateQuantity, updateDeliveryOption} from "../../data/cart.js"
-import { products } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js"
-import { deliveryOptions } from "../../data/deliveryOptions.js";
+import { deliveryOptions, getDeliverOptionUsingId} from "../../data/deliveryOptions.js";
+import { getProductUsingId } from "../../data/products.js";
+import { renderPaymentSummary } from "./paymentSummary.js";
 
 export function renderOrderSummary(){
 let cartHTML = ``
 
 cart.forEach(cartItem => {
-    const matchProduct = products.find((item) => cartItem.productId === item.id)
+    const matchProduct = getProductUsingId(cartItem.productId)
 
-    const deliveryoption = deliveryOptions.find(opt => opt.id === cartItem.deliverOptionId)
+    const deliveryoption = getDeliverOptionUsingId(cartItem.deliverOptionId)
     const today = dayjs();
     const deliverydate = today.add(deliveryoption.deliverydays, 'day');
     const deliverydatestring = deliverydate.format("dddd, MMMM D, YYYY");
@@ -90,7 +91,6 @@ document.querySelectorAll(".js-update-quantity-link").forEach(link => {
   link.addEventListener("click", () => {
 
     const product_id = link.dataset.productId
-    console.log(product_id)
     const cart_container = document.querySelector(`.js-cart-item-container-${product_id}`)
     cart_container.classList.add('is-editing-quantity')
 
@@ -104,7 +104,6 @@ document.querySelectorAll(".js-save-quantity-link").forEach(link => {
   link.addEventListener("click", () => {
 
     const product_id = link.dataset.productId
-    console.log(product_id)
     const cart_container = document.querySelector(`.js-cart-item-container-${product_id}`)
     cart_container.classList.remove('is-editing-quantity')
 
@@ -116,7 +115,6 @@ document.querySelectorAll(".js-save-quantity-link").forEach(link => {
       return
     }
 
-    console.log(new_quantity)
 
     updateQuantity(product_id, new_quantity)
 
@@ -132,7 +130,6 @@ document.querySelectorAll(".js-delivery-option").forEach( (element) =>
   element.addEventListener("click", ()=>{ 
 
       const {productId, deliveryopt} = element.dataset
-      console.log(productId, deliveryopt)
       updateDeliveryOption(productId, parseInt(deliveryopt))
 
       renderOrderSummary()
@@ -140,7 +137,6 @@ document.querySelectorAll(".js-delivery-option").forEach( (element) =>
 )
 
 function deliveroptionshtml(cartItem){
-
   let delhtml = ``
   deliveryOptions.forEach( (deliveryoption) => {
     const today = dayjs()
@@ -165,7 +161,6 @@ function deliveroptionshtml(cartItem){
 
   return delhtml
 }
-
 
 }
 
