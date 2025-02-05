@@ -37,3 +37,10 @@ export function updateQuantity(productid, new_quantity){
   saveToStorage()
 
 }
+
+export function updateDeliveryOption(productid, deliveroption){
+  const matchingitem = cart.find((item) => item.productId === productid)
+  matchingitem.deliverOptionId = deliveroption
+
+  saveToStorage()
+}

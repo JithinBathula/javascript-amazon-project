@@ -1,4 +1,4 @@
-import { cart, removefromcart, updateQuantity } from "../data/cart.js";
+import { cart, removefromcart, updateQuantity, updateDeliveryOption } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js"
@@ -8,11 +8,12 @@ let cartHTML = ``
 
 cart.forEach(cartItem => {
     const matchProduct = products.find((item) => cartItem.productId === item.id)
-    const deliveryoption = deliveryOptions.find((option) => option.id === cartItem.deliverOptionId)
-    const today = dayjs()
-    const deliverydate = today.add(deliveryoption.deliverydays, 'day')
-    const deliverydatestring = deliverydate.format("dddd, MMMM D, YYYY")
 
+    const deliveryoption = deliveryOptions.find(opt => opt.id === cartItem.deliverOptionId)
+    const today = dayjs();
+    const deliverydate = today.add(deliveryoption.deliverydays, 'day');
+    const deliverydatestring = deliverydate.format("dddd, MMMM D, YYYY");
+    
         cartHTML += `          
         <div class="cart-item-container js-cart-item-container-${matchProduct.id}">
             <div class="delivery-date">
@@ -124,6 +125,17 @@ document.querySelectorAll(".js-save-quantity-link").forEach(link => {
   })
 });
 
+
+document.querySelectorAll(".js-delivery-option").forEach( (element) => 
+
+  element.addEventListener("click", ()=>{ 
+
+      const {productId, deliveryopt} = element.dataset
+      console.log(productId, deliveryopt)
+      updateDeliveryOption(productId, parseInt(deliveryopt))
+  })
+)
+
 function deliveroptionshtml(cartItem){
 
   let delhtml = ``
@@ -132,11 +144,9 @@ function deliveroptionshtml(cartItem){
     const deliverydate = today.add(deliveryoption.deliverydays, 'day')
     const deliverydatestring = deliverydate.format("dddd, MMMM D, YYYY")
     const pricestring = deliveryoption.priceCents === 0 ? 'Free' : `$${formatCurrency(deliveryoption.priceCents)} - `
-    console.log(cartItem.deliverOptionId)
     const isChecked = cartItem.deliverOptionId === deliveryoption.id ? "checked" : ""
-    console.log(isChecked)
     delhtml += `<div class="delivery-option">
-                  <input type="radio" class="delivery-option-input" ${isChecked}
+                  <input type="radio" class="delivery-option-input js-delivery-option" ${isChecked} data-product-id="${cartItem.productId}" data-deliveryopt="${deliveryoption.id}"
                     name="delivery-option-${cartItem.productId}">
                   <div>
                     <div class="delivery-option-date">
@@ -152,4 +162,5 @@ function deliveroptionshtml(cartItem){
 
   return delhtml
 }
+
 
