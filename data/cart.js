@@ -1,23 +1,26 @@
-export let cart = JSON.parse(localStorage.getItem('cart'))
-if (!cart){
+export let cart;
+
+export function loadCart(){
+  cart = JSON.parse(localStorage.getItem('cart'))
+  if (!cart){
   cart = [];
 }
+}
+
+loadCart()
+
 
 export function saveToStorage(){
   localStorage.setItem('cart', JSON.stringify(cart))
 }
 
 export function addToCart(productId) {
-    const matchingitem = cart.find((item) => productId === item.productId); // this stores the reference to the original object
-    const quantityselector = document.querySelector(
-      `.js-quantity-select[data-product-id="${productId}"]`
-    );
-    const quantity = parseInt(quantityselector.value);
+    const matchingitem = cart.find((item) => productId === item.productId); // this stores the reference to the original objec
   
     if (matchingitem) {
-      matchingitem.quantity += quantity; // this works because objects are passed by reference and not value
+      matchingitem.quantity += 1; // this works because objects are passed by reference and not value
     } else {
-      cart.push({ productId: productId, quantity: quantity, deliverOptionId: 1 });
+      cart.push({ productId: productId, quantity: 1, deliverOptionId: 1 });
     }
 
     saveToStorage()
